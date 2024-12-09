@@ -1,26 +1,43 @@
 import '../global.css';
 
+import { StreamCall, StreamVideo, StreamVideoClient, User } from "@stream-io/video-react-native-sdk";
 import { Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StreamChat } from 'stream-chat';
 import { Chat, OverlayProvider } from 'stream-chat-expo';
+import MyVideoUI from "~/components/my-video-ui";
 
-const client = StreamChat.getInstance('fbev6wznrvfv');
+const apiKey = 'fbev6wznrvfv';
+const chatClient = StreamChat.getInstance(apiKey);
+const userId = 'jlahey';
+const token =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamxhaGV5In0.d1VhCm2Rs_Z0jRHdzUw5FBM633GQXstFklxqVwM_pl0';
+const callId = 'default_b0585e19-9d05-407f-b597-f8bcd74644d6';
+
+const user: User = {
+  id: userId,
+  name: 'Jim Lahey',
+  image: 'https://i.imgur.com/fR9Jz14.png',
+};
+
+const videoClient = new StreamVideoClient({ apiKey, user, token });
+const call = videoClient.call("development", callId);
+call.join({ create: true });
 
 export default function Layout() {
   useEffect(() => {
     const setupClient = async () => {
-      await client.connectUser(
+      await chatClient.connectUser(
         {
-          id: 'jlahey',
+          id: userId,
           name: 'Jim Lahey',
           image: 'https://i.imgur.com/fR9Jz14.png',
         },
-        client.devToken('jlahey')
+        chatClient.devToken('jlahey')
       );
 
-      const channel = client.channel('messaging', 'the_park', {
+      const channel = chatClient.channel('messaging', 'the_park', {
         name: 'The Park',
       });
       await channel.watch();
@@ -28,15 +45,20 @@ export default function Layout() {
     setupClient();
 
     return () => {
-      client.disconnectUser();
+      chatClient.disconnectUser();
     };
   }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <OverlayProvider>
-        <Chat client={client}>
-          <Stack />
+        <Chat client={chatClient}>
+          <StreamVideo client={videoClient}>
+            <StreamCall call={call}>
+              <MyVideoUI />
+            </StreamCall>
+            {/*<Stack screenOptions={{ headerShown: false }} />*/}
+          </StreamVideo>
         </Chat>
       </OverlayProvider>
     </GestureHandlerRootView>
