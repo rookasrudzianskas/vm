@@ -10,7 +10,7 @@ const Call = () => {
   useEffect(() => {
     const setupCall = async () => {
       if (!videoClient) return;
-      const call = videoClient?.call('default', 'my-call-id');
+      const call = videoClient?.call('default', 'default_b0585e19-9d05-407f-b597-f8bcd74644d6');
       await call?.join({ create: true });
       setCall(call);
     };

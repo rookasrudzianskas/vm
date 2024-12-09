@@ -22,7 +22,7 @@ const user: User = {
 };
 
 const videoClient = new StreamVideoClient({ apiKey, user, token });
-const call = videoClient.call("development", callId);
+const call = videoClient.call("default", callId);
 call.join({ create: true });
 
 export default function Layout() {
@@ -54,10 +54,10 @@ export default function Layout() {
       <OverlayProvider>
         <Chat client={chatClient}>
           <StreamVideo client={videoClient}>
-            <StreamCall call={call}>
-              <MyVideoUI />
-            </StreamCall>
-            {/*<Stack screenOptions={{ headerShown: false }} />*/}
+            {/*<StreamCall call={call}>*/}
+            {/*  <MyVideoUI />*/}
+            {/*</StreamCall>*/}
+            <Stack screenOptions={{ headerShown: false }} />
           </StreamVideo>
         </Chat>
       </OverlayProvider>
