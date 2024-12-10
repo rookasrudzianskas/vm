@@ -22,14 +22,9 @@ Deno.serve(async (req) => {
     { global: { headers: { Authorization: authHeader } } }
   )
 
-  const authHeader = req.headers.get('Authorization')!
-  const token = authHeader.replace('Bearer ', '')
-  const { data } = await supabaseClient.auth.getUser(token)
-  const user = data.user
-
-  console.log(user);
-
-  const token = serverClient.createToken("john");
+  const authToken = authHeader.replace('Bearer ', '')
+  const { data } = await supabaseClient.auth.getUser(authToken)
+  const token = serverClient.createToken(data.user.id);
   console.log(token);
 
   return new Response(
