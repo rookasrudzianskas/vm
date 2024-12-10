@@ -19,7 +19,8 @@
           "microphonePermission": "$(PRODUCT_NAME) requires microphone access in order to capture and transmit audio"
         }
       ],
-      "expo-build-properties"
+      "expo-build-properties",
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true,

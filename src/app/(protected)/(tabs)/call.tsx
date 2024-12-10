@@ -1,7 +1,7 @@
 import { CallContent, StreamCall, useStreamVideoClient } from "@stream-io/video-react-native-sdk";
 import React, { useEffect, useState } from 'react';
 
-import MyVideoUI from '~/components/my-video-ui';
+import MyVideoUI from '~/src/components/my-video-ui';
 
 const Call = () => {
   const videoClient = useStreamVideoClient();

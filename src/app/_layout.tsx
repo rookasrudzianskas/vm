@@ -1,4 +1,4 @@
-import '../global.css';
+import '../../global.css';
 
 import { StreamCall, StreamVideo, StreamVideoClient, User } from "@stream-io/video-react-native-sdk";
 import { Stack } from 'expo-router';
@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StreamChat } from 'stream-chat';
 import { Chat, OverlayProvider } from 'stream-chat-expo';
-import MyVideoUI from "~/components/my-video-ui";
+import MyVideoUI from "~/src/components/my-video-ui";
 
 const apiKey = 'fbev6wznrvfv';
 const chatClient = StreamChat.getInstance(apiKey);
