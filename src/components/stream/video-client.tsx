@@ -6,13 +6,13 @@ export default function VideoClient({ children }: { children: React.ReactNode })
   const apiKey = 'fbev6wznrvfv';
   const { user } = useAuth();
 
-const client = new StreamVideoClient({
-  apiKey: apiKey,
-  user: {
-    id: user?.id || "",
-  },
-  tokenProvider: streamTokenProvider
-});
+  const client = StreamVideoClient.getOrCreateInstance({
+    apiKey: apiKey,
+    user: {
+      id: user?.id || "",
+    },
+    tokenProvider: streamTokenProvider
+  });
 
   return (
     <StreamVideo client={client}>

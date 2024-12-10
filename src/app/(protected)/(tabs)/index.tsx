@@ -1,14 +1,26 @@
-import { Stack, Link } from 'expo-router';
+import { Stack, Link, useRouter } from "expo-router";
 import React, { useState } from 'react';
 import { TouchableOpacity, Text, SafeAreaView, View } from 'react-native';
 import { Channel as ChannelType } from 'stream-chat';
 import { Channel, ChannelList, MessageInput, MessageList } from 'stream-chat-expo';
+import { useAuth } from "~/src/contexts/AuthProvider";
+import { supabase } from "~/src/lib/supabase";
 
 export default function Home() {
   const [channel, setChannel] = useState<ChannelType>();
+  const router = useRouter();
+    const { user } = useAuth();
 
-  const handleStartPracticeLesson = () => {
-    console.log('Starting practice lesson');
+  const handleStartPracticeLesson = async () => {
+    const { error, data } = await supabase.from('practice_queue').upsert({
+      id: user?.id,
+    });
+    console.log('Practice Queue Added');
+    if(error) {
+      console.error('Failed to add practice queue:', error);
+      return;
+    }
+    router.push('/practice/searching')
   };
 
   return (

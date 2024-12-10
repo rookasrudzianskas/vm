@@ -1,4 +1,4 @@
-import { Redirect, Slot } from 'expo-router';
+import { Redirect, Slot, Stack } from "expo-router";
 import { useAuth } from "~/src/contexts/AuthProvider";
 import ChatClient from "~/src/components/stream/chat-client";
 import VideoClient from "~/src/components/stream/video-client";
@@ -13,7 +13,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
   return (
     <ChatClient>
       <VideoClient>
-        <Slot />
+        <Stack screenOptions={{ headerShown: false }} />
       </VideoClient>
     </ChatClient>
   )
