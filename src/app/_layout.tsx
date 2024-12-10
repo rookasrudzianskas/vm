@@ -7,6 +7,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StreamChat } from 'stream-chat';
 import { Chat, OverlayProvider } from 'stream-chat-expo';
 import MyVideoUI from "~/src/components/my-video-ui";
+import { AuthProvider } from "~/src/contexts/AuthProvider";
 
 const apiKey = 'fbev6wznrvfv';
 const chatClient = StreamChat.getInstance(apiKey);
@@ -50,17 +51,19 @@ export default function Layout() {
   }, []);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <OverlayProvider>
-        <Chat client={chatClient}>
-          <StreamVideo client={videoClient}>
-            {/*<StreamCall call={call}>*/}
-            {/*  <MyVideoUI />*/}
-            {/*</StreamCall>*/}
-            <Stack screenOptions={{ headerShown: false }} />
-          </StreamVideo>
-        </Chat>
-      </OverlayProvider>
-    </GestureHandlerRootView>
+    <AuthProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <OverlayProvider>
+          <Chat client={chatClient}>
+            <StreamVideo client={videoClient}>
+              {/*<StreamCall call={call}>*/}
+              {/*  <MyVideoUI />*/}
+              {/*</StreamCall>*/}
+              <Stack screenOptions={{ headerShown: false }} />
+            </StreamVideo>
+          </Chat>
+        </OverlayProvider>
+      </GestureHandlerRootView>
+    </AuthProvider>
   );
 }

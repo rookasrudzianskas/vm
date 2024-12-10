@@ -14,7 +14,9 @@ import {
   Keyboard,
 } from 'react-native';
 
+// import * as AppleAuthentication from 'expo-apple-authentication';
 import { supabase } from '~/src/lib/supabase';
+import { useRouter } from "expo-router";
 
 AppState.addEventListener('change', (state) => {
   if (state === 'active') {
@@ -28,7 +30,7 @@ const AuthScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter();
   async function signInWithEmail() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
@@ -54,6 +56,41 @@ const AuthScreen = () => {
     if (!session) Alert.alert('Please check your inbox for email verification!');
     setLoading(false);
   }
+
+  // hello.rokastech@gmail.com rokas2020
+  const handleAppleSignIn = async () => {
+    // try {
+    //   const credential = await AppleAuthentication.signInAsync({
+    //     requestedScopes: [
+    //       AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+    //       AppleAuthentication.AppleAuthenticationScope.EMAIL,
+    //     ],
+    //   });
+    //
+    //   if (credential.identityToken) {
+    //     const {
+    //       error,
+    //       data: { user },
+    //     } = await supabase.auth.signInWithIdToken({
+    //       provider: 'apple',
+    //       token: credential.identityToken,
+    //     });
+    //
+    //     if (error) {
+    //       Alert.alert('Error', error.message);
+    //     }
+    //   } else {
+    //     throw new Error('No identityToken.');
+    //   }
+    // } catch (e) {
+    //   if (e.code === 'ERR_REQUEST_CANCELED') {
+    //     // User canceled the sign-in flow
+    //     console.log('Sign-in was canceled');
+    //   } else {
+    //     Alert.alert('Error', e.message);
+    //   }
+    // }
+  };
 
   const InputField = ({
     icon,
@@ -84,6 +121,21 @@ const AuthScreen = () => {
     </View>
   );
 
+  // const renderAppleButton = () => {
+  //   if (Platform.OS === 'ios') {
+  //     return (
+  //       <AppleAuthentication.AppleAuthenticationButton
+  //         buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+  //         buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+  //         cornerRadius={12}
+  //         className="mt-4 h-14 w-full"
+  //         onPress={handleAppleSignIn}
+  //       />
+  //     );
+  //   }
+  //   return null;
+  // };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -99,7 +151,7 @@ const AuthScreen = () => {
                 Sign in to continue to your account
               </Text>
 
-              <View className="space-y-6 gap-5">
+              <View className="gap-5 space-y-6">
                 <InputField
                   icon="envelope"
                   placeholder="Enter your email"
@@ -140,6 +192,8 @@ const AuthScreen = () => {
                     {loading ? 'Creating account...' : 'Create Account'}
                   </Text>
                 </TouchableOpacity>
+
+                {/*{renderAppleButton()}*/}
               </View>
             </View>
           </View>
