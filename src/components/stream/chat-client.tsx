@@ -2,12 +2,7 @@ import { Chat, useCreateChatClient } from "stream-chat-expo";
 import { useAuth } from "~/src/contexts/AuthProvider";
 import { supabase } from "~/src/lib/supabase";
 import { Text, View } from "react-native";
-
-const streamTokenProvider = async () => {
-  const response = await supabase.functions.invoke('stream-token-provider')
-  console.log(response.data.token);
-  return response.data?.token || ""
-}
+import { streamTokenProvider } from "~/src/utils/stream";
 
 export default function ChatClient({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();

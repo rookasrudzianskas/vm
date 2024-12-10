@@ -1,6 +1,7 @@
 import { Redirect, Slot } from 'expo-router';
 import { useAuth } from "~/src/contexts/AuthProvider";
-import ChatClient from "~/src/components/chat-client";
+import ChatClient from "~/src/components/stream/chat-client";
+import VideoClient from "~/src/components/stream/video-client";
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -9,11 +10,11 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
     return <Redirect href="/auth" />;
   }
 
-  // Here the user is authenticated
-
   return (
     <ChatClient>
-      <Slot />
+      <VideoClient>
+        <Slot />
+      </VideoClient>
     </ChatClient>
   )
 }

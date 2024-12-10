@@ -1,7 +1,7 @@
 import { CallContent, StreamCall, useStreamVideoClient } from "@stream-io/video-react-native-sdk";
 import React, { useEffect, useState } from 'react';
 
-import MyVideoUI from '~/src/components/my-video-ui';
+import MyVideoUI from '~/src/components/stream/my-video-ui';
 
 const Call = () => {
   const videoClient = useStreamVideoClient();
@@ -10,9 +10,13 @@ const Call = () => {
   useEffect(() => {
     const setupCall = async () => {
       if (!videoClient) return;
-      const call = videoClient?.call('default', 'default_b0585e19-9d05-407f-b597-f8bcd74644d6');
-      await call?.join({ create: true });
-      setCall(call);
+      const call = videoClient?.call('default', 'default_e5e10b91-8a3d-4e3e-9c19-0b58375162ba');
+      try {
+        await call?.join({ create: true });
+        setCall(call);
+      } catch (error) {
+        console.error('Failed to join call:', error);
+      }
     };
     setupCall();
   }, [videoClient]);
