@@ -21,6 +21,8 @@ const Call = () => {
     setupCall();
   }, [videoClient]);
 
+  if(!call) return null;
+
   return (
     <StreamCall call={call}>
       {/*<MyVideoUI />*/}
