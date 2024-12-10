@@ -59,7 +59,7 @@ export default function Layout() {
               {/*<StreamCall call={call}>*/}
               {/*  <MyVideoUI />*/}
               {/*</StreamCall>*/}
-              <Stack screenOptions={{ headerShown: false }} />
+              <Stack screenOptions={{ headerShown: false, animation: 'fade' }} />
             </StreamVideo>
           </Chat>
         </OverlayProvider>
