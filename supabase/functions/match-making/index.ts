@@ -18,17 +18,33 @@ Deno.serve(async (req) => {
     }
   );
 
-  const { data, error } = await supabase.from("practice_queue").select("*").neq("id", record.id).order("created_at", {
+  const { data: partner, error: error2 } = await supabase.from("practice_queue").select("*").neq("id", record.id).order("created_at", {
     ascending: true,
   }).limit(1).single();
 
-  if(error || !data) {
+  if(error2 || !partner) {
     console.log("Errorr getting partner");
     return new Response("Error getting partner", { status: 500 });
   }
 
   console.log("user 1", record);
-  console.log("Record:", data);
+  console.log("Record:", partner);
+
+  const { data, error: errorCreatingPractice } = await supabase
+    .from('practices')
+    .insert([
+      { user1_id: record.id, user2_id: partner.id },
+    ])
+    .select()
+
+  if(errorCreatingPractice) {
+    console.log("Error creating practice:", errorCreatingPractice);
+    return new Response("Error creating practice", { status: 500 });
+  }
+
+  // remove the users from the queue
+  await supabase.from('practice_queue').delete().eq('id', record.id);
+  await supabase.from('practice_queue').delete().eq('id', partner.id);
 
   return new Response(
     JSON.stringify(record),
