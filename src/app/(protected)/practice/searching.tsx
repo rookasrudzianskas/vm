@@ -1,11 +1,12 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Text, View, StyleSheet } from "react-native";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { supabase } from "~/src/lib/supabase";
 import { useAuth } from "~/src/contexts/AuthProvider";
 
 const Searching = () => {
   const { user } = useAuth();
+  const router = useRouter();
 
   const addToQueue = useCallback(async () => {
     const { error, data } = await supabase.from('practice_queue').upsert({
@@ -37,6 +38,22 @@ const Searching = () => {
     }, [])
   );
 
+  useEffect(() => {
+    const handleInserts = (payload) => {
+      console.log('Change received!', payload)
+      if(payload.eventType === 'INSERT') {
+        router.push(`/practice/${payload.new.id}`);
+      }
+    }
+
+    console.log('Subscribing to practices channel');
+
+    supabase
+      .channel('practices')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'practices' }, handleInserts)
+      .subscribe()
+  }, [user?.id]);
+
   return (
     <View className={'flex-1 items-center justify-center'}>
       <Text>
@@ -47,3 +64,6 @@ const Searching = () => {
 };
 
 export default Searching;
+
+
+/// hello.rokastech@gmail.com rokas2020
