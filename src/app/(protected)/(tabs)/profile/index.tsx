@@ -90,14 +90,14 @@ const SettingsScreen = () => {
             Account Settings
           </Text>
           <SettingsItem
-            icon="user"
-            title="Edit Profile"
-            onPress={() => console.log('Edit Profile')}
+            icon="american-sign-language-interpreting"
+            title="Learning"
+            onPress={() => router.push('/profile/select-learning-language')}
           />
           <SettingsItem
-            icon="envelope"
-            title="Email Preferences"
-            onPress={() => console.log('Email Preferences')}
+            icon="sign-language"
+            title="Speaking"
+            onPress={() => router.push('/profile/select-speaking-language')}
           />
           <SettingsItem
             icon="bell"

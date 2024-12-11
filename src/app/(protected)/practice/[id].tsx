@@ -18,6 +18,7 @@ const fetchPractice = async (id: string) => {
     console.log(error);
     return null;
   }
+
   return data;
 }
 
@@ -29,7 +30,6 @@ const MyCallControls = () => {
 
   return (
     <View>
-
     </View>
   )
 }
@@ -46,55 +46,61 @@ const PracticeScreen = () => {
   const router = useRouter();
 
   useEffect(() => {
-    let unsubscribe: () => void;
+    let unsubscribeCall: (() => void) | undefined;
+
     const setupCall = async () => {
       if (!videoClient || !practice) return;
-      const call = videoClient?.call('default', practice.id);
 
-      const unsubscribe = call.on('call.ended', () => {
-        call.leave();
+      const newCall = videoClient?.call('default', practice.id);
+
+      unsubscribeCall = newCall.on('call.ended', () => {
+        newCall.leave();
         router.back();
       });
 
       try {
-        await call?.join({ create: true });
-        setCall(call);
+        await newCall?.join({ create: true });
+        setCall(newCall);
       } catch (error) {
         console.error('Failed to join call:', error);
       }
     };
+
     setupCall();
 
     return () => {
-      unsubscribe();
-      if(call) {
+      if (unsubscribeCall) {
+        unsubscribeCall();
+      }
+
+      if (call) {
         call?.leave().catch(() => console.error("Failed to leave the call"));
         call.off('call.ended', () => {});
         setCall(undefined);
       }
     };
-  }, [videoClient, practice]);
+  }, [videoClient, practice, router]);
 
-  useFocusEffect(() => {
+  useFocusEffect(
     useCallback(() => {
       return () => {
-        if(call) {
+        if (call) {
           call?.endCall();
           setCall(undefined);
         }
       };
-    }, [call]);
-  });
+    }, [call])
+  );
 
-  if(isLoading) {
+  if (isLoading) {
     return <Text>Loading...</Text>
   }
 
-  if(error) {
+  if (error) {
     return <Text>Error: {error.message}</Text>
   }
 
-  if(!call) {
+  if (!call) {
     return null
   }
 
