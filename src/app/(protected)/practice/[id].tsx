@@ -46,7 +46,7 @@ const PracticeScreen = () => {
   const router = useRouter();
 
   useEffect(() => {
-    let unsubscribe = () => void;
+    let unsubscribe: () => void;
     const setupCall = async () => {
       if (!videoClient || !practice) return;
       const call = videoClient?.call('default', practice.id);
