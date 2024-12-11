@@ -12,15 +12,27 @@ export default function Home() {
     const { user } = useAuth();
 
   const handleStartPracticeLesson = async () => {
-    const { error, data } = await supabase.from('practice_queue').upsert({
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', user?.id)
+      .single();
+
+    if (profileError || !profileData) {
+      console.error('User profile does not exist:', profileError);
+      return;
+    }
+
+    const { error } = await supabase.from('practice_queue').upsert({
       id: user?.id,
     });
-    console.log('Practice Queue Added');
-    if(error) {
+
+    if (error) {
       console.error('Failed to add practice queue:', error);
       return;
     }
-    router.push('/practice/searching')
+
+    router.push('/practice/searching');
   };
 
   return (

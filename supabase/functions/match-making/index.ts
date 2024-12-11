@@ -30,6 +30,11 @@ Deno.serve(async (req) => {
   console.log("user 1", record);
   console.log("Record:", partner);
 
+  // remove the users from the queue
+  await supabase.from('practice_queue').delete().eq('id', record.id);
+  await supabase.from('practice_queue').delete().eq('id', partner.id);
+
+
   const { data, error: errorCreatingPractice } = await supabase
     .from('practices')
     .insert([
@@ -39,13 +44,9 @@ Deno.serve(async (req) => {
 
   if(errorCreatingPractice) {
     console.log("Error creating practice:", errorCreatingPractice);
+    // @TODO probably we should return a 500 error here
     return new Response("Error creating practice", { status: 500 });
   }
-
-  // remove the users from the queue
-  await supabase.from('practice_queue').delete().eq('id', record.id);
-  await supabase.from('practice_queue').delete().eq('id', partner.id);
-
   return new Response(
     JSON.stringify(record),
     { headers: { "Content-Type": "application/json" } },

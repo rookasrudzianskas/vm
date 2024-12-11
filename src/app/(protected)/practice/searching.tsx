@@ -39,7 +39,7 @@ const Searching = () => {
   );
 
   useEffect(() => {
-    const handleInserts = (payload: any) => {
+    const handleInserts = (payload) => {
       console.log('Change received!', payload)
       if(payload.eventType === 'INSERT') {
         router.push(`/practice/${payload.new.id}`);
