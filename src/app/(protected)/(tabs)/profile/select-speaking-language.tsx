@@ -1,9 +1,26 @@
 import React from "react";
 import LanguageList from "~/src/components/language-list";
+import { useRouter } from "expo-router";
+import { useAuth } from "~/src/contexts/AuthProvider";
+import { supabase } from "~/src/lib/supabase";
 
 const SelectSpeakingLanguage = () => {
+  const router = useRouter();
+  const { user } = useAuth();
+  const onSelect = async (language: string) => {
+    if(user) {
+      console.log('Selected language:', user);
+      console.log('Updating profile:', user.id);
+      const { error } = await supabase.from('profiles').update({ speaking: language }).eq('id', user.id);
+      if(error) {
+        console.error('Failed to update profile:', error);
+        return;
+      }
+    }
+    router.back();
+  }
   return (
-    <LanguageList />
+    <LanguageList onSelect={onSelect} />
   );
 };
 
