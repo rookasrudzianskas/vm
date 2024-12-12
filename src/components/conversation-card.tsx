@@ -3,7 +3,7 @@ import React from "react";
 import { Text, View, StyleSheet, Button } from "react-native";
 
 const ConversationCard = () => {
-  export const LIST_OF_QUESTIONS = [
+  const LIST_OF_QUESTIONS = [
     "What is your favorite food?",
     "What is your favorite color?",
     "What is your favorite animal?",
@@ -18,7 +18,7 @@ const ConversationCard = () => {
   }
 
   return (
-    <View className={'items-center justify-center p-10'}>
+    <View className={'items-center justify-center'}>
       <Text className={'text-center text-lg font-bold'}>
         {setRandomQuestion()}
       </Text>
