@@ -10,6 +10,7 @@ import {
   useCallStateHooks,
   useStreamVideoClient
 } from "@stream-io/video-react-native-sdk";
+import { useAuth } from "~/src/contexts/AuthProvider";
 
 const fetchPractice = async (id: string) => {
   const { data, error } = await
@@ -44,10 +45,13 @@ const MyCallControls = () => {
 
 const PracticeScreen = () => {
   const { id } = useLocalSearchParams<{id: string}>();
+  const { user } = useAuth();
   const { data: practice, isLoading, error } = useQuery({
     queryKey: ['practice', id],
     queryFn: () => fetchPractice(id),
   });
+
+  const otherUser = practice?.profile1?.id === user?.id ? practice?.profile2 : practice?.profile1;
 
   const videoClient = useStreamVideoClient();
   const [call, setCall] = useState<Call>();
@@ -114,6 +118,9 @@ const PracticeScreen = () => {
 
   return (
     <StreamCall call={call}>
+      {otherUser && (
+        <Text className={'text-lg text-center p-4 font-bold'}>{otherUser?.name} Learning {otherUser?.learning}, speaking {otherUser?.speaking}</Text>
+      )}
       <CallContent />
       <MyCallControls />
     </StreamCall>
