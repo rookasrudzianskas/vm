@@ -51,12 +51,31 @@ const CustomCallControls = () => {
   )
 }
 
+export const LIST_OF_QUESTIONS = [
+  "What is your favorite food?",
+  "What is your favorite color?",
+  "What is your favorite animal?",
+  "What is your favorite book?",
+  "What is your favorite movie?",
+  "What is your favorite song?",
+];
+
 const PracticeScreen = () => {
   const { id } = useLocalSearchParams<{id: string}>();
   const { user } = useAuth();
   const videoClient = useStreamVideoClient();
   const [call, setCall] = useState<Call>();
   const router = useRouter();
+  const [card, setCard] = useState();
+
+  const setRandomQuestion = () => {
+    const randomIndex = Math.floor(Math.random() * LIST_OF_QUESTIONS.length);
+    setCard(LIST_OF_QUESTIONS[randomIndex]);
+  }
+
+  useEffect(() => {
+    setRandomQuestion();
+  }, []);
 
   const { data: practice, isLoading, error } = useQuery({
     queryKey: ['practice', id],
@@ -111,9 +130,17 @@ const PracticeScreen = () => {
 
   useEffect(() => {
     if(!call) return;
-    call.on('setCard', (event: CustomVideoEvent) => {
+    const unsubscribe = call.on('custom', (event: CustomVideoEvent) => {
       console.log("Received event:", event);
+      if(event.custom.type === 'setCard') {
+        onChangeCard(event.custom.id);
+      }
     });
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, [call])
 
   useFocusEffect(
@@ -144,7 +171,7 @@ const PracticeScreen = () => {
       {otherUser && (
         <Text className={'text-lg text-center p-4 font-bold pt-16'}>{otherUser?.name} Learning {otherUser?.learning}, speaking {otherUser?.speaking}</Text>
       )}
-      <ConversationCard onChangeCard={onChangeCard} />
+      <ConversationCard onChangeCard={onChangeCard} card={card} setRandomQuestion={setRandomQuestion} />
       <CallContent
         onHangupCallHandler={() => router.back()}
         CallControls={CustomCallControls}
