@@ -4,7 +4,6 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-// Supabase and Stream imports
 import { supabase } from "~/src/lib/supabase";
 import {
   Call,
@@ -19,11 +18,9 @@ import {
   useStreamVideoClient
 } from "@stream-io/video-react-native-sdk";
 
-// Local imports
 import { useAuth } from "~/src/contexts/AuthProvider";
 import ConversationCard from "~/src/components/conversation-card";
 
-// Constants
 const LIST_OF_QUESTIONS = [
   "What is your favorite food?",
   "What is your favorite color?",
@@ -33,7 +30,6 @@ const LIST_OF_QUESTIONS = [
   "What is your favorite song?",
 ];
 
-// Utility functions
 const fetchPractice = async (id: string) => {
   const { data, error } = await supabase
     .from('practices')
@@ -52,7 +48,6 @@ const fetchPractice = async (id: string) => {
   return data;
 };
 
-// Custom components
 const CustomCallControls = () => {
   const { useCallCallingState } = useCallStateHooks();
   const callingState = useCallCallingState();
@@ -71,24 +66,20 @@ const CustomCallControls = () => {
   );
 };
 
-// Main screen component
 const PracticeScreen = () => {
   const { id } = useLocalSearchParams<{id: string}>();
   const { user } = useAuth();
   const videoClient = useStreamVideoClient();
   const router = useRouter();
 
-  // State management
   const [call, setCall] = useState<Call>();
   const [card, setCard] = useState<string>();
 
-  // Fetch practice data
   const { data: practice, isLoading, error } = useQuery({
     queryKey: ['practice', id],
     queryFn: () => fetchPractice(id),
   });
 
-  // Utility functions
   const setRandomQuestion = useCallback(() => {
     const randomIndex = Math.floor(Math.random() * LIST_OF_QUESTIONS.length);
     setCard(LIST_OF_QUESTIONS[randomIndex]);
@@ -102,12 +93,10 @@ const PracticeScreen = () => {
     });
   };
 
-  // Determine other user
   const otherUser = practice?.profile1?.id === user?.id
     ? practice?.profile2
     : practice?.profile1;
 
-  // Call setup effect
   useEffect(() => {
     let unsubscribeCall: (() => void) | undefined;
 
@@ -145,7 +134,6 @@ const PracticeScreen = () => {
     };
   }, [videoClient, practice, router, setRandomQuestion]);
 
-  // Custom event handling
   useEffect(() => {
     if (!call) return;
 
@@ -163,7 +151,6 @@ const PracticeScreen = () => {
     };
   }, [call]);
 
-  // Focus effect for cleanup
   useFocusEffect(
     useCallback(() => {
       return () => {
@@ -175,7 +162,6 @@ const PracticeScreen = () => {
     }, [call])
   );
 
-  // Rendering
   if (isLoading) {
     return <Text>Loading...</Text>;
   }
