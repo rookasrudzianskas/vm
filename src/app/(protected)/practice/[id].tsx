@@ -12,6 +12,7 @@ import {
 } from "@stream-io/video-react-native-sdk";
 import { useAuth } from "~/src/contexts/AuthProvider";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import ConversationCard from "~/src/components/conversation-card";
 
 const fetchPractice = async (id: string) => {
   const { data, error } = await
@@ -129,18 +130,11 @@ const PracticeScreen = () => {
       {otherUser && (
         <Text className={'text-lg text-center p-4 font-bold pt-16'}>{otherUser?.name} Learning {otherUser?.learning}, speaking {otherUser?.speaking}</Text>
       )}
+      <ConversationCard />
       <CallContent
         onHangupCallHandler={() => router.back()}
         CallControls={CustomCallControls}
       />
-
-      <SafeAreaView>
-        <View className={'flex-1 items-center justify-center p-4'}>
-          <Text className={'text-center text-lg font-bold'}>What is your favorite food?</Text>
-          <Text className={'text-center text-lg font-bold'}>What is your favorite color?</Text>
-          <Text className={'text-center text-lg font-bold'}>Answer in {otherUser?.learning}</Text>
-        </View>
-      </SafeAreaView>
     </StreamCall>
   );
 };
