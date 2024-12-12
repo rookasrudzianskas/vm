@@ -1,16 +1,17 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, SafeAreaView } from "react-native";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "~/src/lib/supabase";
 import {
   Call,
-  CallContent,
-  StreamCall,
+  CallContent, HangUpCallButton,
+  StreamCall, ToggleAudioPublishingButton, ToggleCameraFaceButton, ToggleVideoPublishingButton,
   useCallStateHooks,
   useStreamVideoClient
 } from "@stream-io/video-react-native-sdk";
 import { useAuth } from "~/src/contexts/AuthProvider";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const fetchPractice = async (id: string) => {
   const { data, error } = await
@@ -31,15 +32,22 @@ const fetchPractice = async (id: string) => {
   return data;
 }
 
-const MyCallControls = () => {
+const CustomCallControls = () => {
   const { useCallCallingState } = useCallStateHooks();
   const callingState = useCallCallingState();
 
   console.log(callingState);
 
   return (
-    <View>
-    </View>
+    <SafeAreaView edges={['bottom']}>
+      <View className={'flex-row justify-around p-6'}>
+        <ToggleAudioPublishingButton />
+        <ToggleVideoPublishingButton />
+        <ToggleCameraFaceButton />
+        <MaterialCommunityIcons name="cards" size={24} color="black" />
+        <HangUpCallButton />
+      </View>
+    </SafeAreaView>
   )
 }
 
@@ -119,10 +127,20 @@ const PracticeScreen = () => {
   return (
     <StreamCall call={call}>
       {otherUser && (
-        <Text className={'text-lg text-center p-4 font-bold'}>{otherUser?.name} Learning {otherUser?.learning}, speaking {otherUser?.speaking}</Text>
+        <Text className={'text-lg text-center p-4 font-bold pt-16'}>{otherUser?.name} Learning {otherUser?.learning}, speaking {otherUser?.speaking}</Text>
       )}
-      <CallContent />
-      <MyCallControls />
+      <CallContent
+        onHangupCallHandler={() => router.back()}
+        CallControls={CustomCallControls}
+      />
+
+      <SafeAreaView>
+        <View className={'flex-1 items-center justify-center p-4'}>
+          <Text className={'text-center text-lg font-bold'}>What is your favorite food?</Text>
+          <Text className={'text-center text-lg font-bold'}>What is your favorite color?</Text>
+          <Text className={'text-center text-lg font-bold'}>Answer in {otherUser?.learning}</Text>
+        </View>
+      </SafeAreaView>
     </StreamCall>
   );
 };
