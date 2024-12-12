@@ -1,23 +1,42 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Text, View, StyleSheet, SafeAreaView } from "react-native";
+import { Text, View, SafeAreaView } from "react-native";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+// Supabase and Stream imports
 import { supabase } from "~/src/lib/supabase";
 import {
   Call,
-  CallContent, CustomVideoEvent, HangUpCallButton,
-  StreamCall, ToggleAudioPublishingButton, ToggleCameraFaceButton, ToggleVideoPublishingButton,
+  CallContent,
+  CustomVideoEvent,
+  HangUpCallButton,
+  StreamCall,
+  ToggleAudioPublishingButton,
+  ToggleCameraFaceButton,
+  ToggleVideoPublishingButton,
   useCallStateHooks,
   useStreamVideoClient
 } from "@stream-io/video-react-native-sdk";
+
+// Local imports
 import { useAuth } from "~/src/contexts/AuthProvider";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ConversationCard from "~/src/components/conversation-card";
 
+// Constants
+const LIST_OF_QUESTIONS = [
+  "What is your favorite food?",
+  "What is your favorite color?",
+  "What is your favorite animal?",
+  "What is your favorite book?",
+  "What is your favorite movie?",
+  "What is your favorite song?",
+];
+
+// Utility functions
 const fetchPractice = async (id: string) => {
-  const { data, error } = await
-    supabase
-      .from('practices')
+  const { data, error } = await supabase
+    .from('practices')
     .select('*, profile1:profiles!practices_user1_id_fkey(*),profile2:profiles!practices_user2_id_fkey(*)')
     .eq('id', id)
     .single();
@@ -26,13 +45,14 @@ const fetchPractice = async (id: string) => {
   console.log(JSON.stringify(data, null, 2));
 
   if (error) {
-    console.log(error);
+    console.error('Fetch practice error:', error);
     return null;
   }
 
   return data;
-}
+};
 
+// Custom components
 const CustomCallControls = () => {
   const { useCallCallingState } = useCallStateHooks();
   const callingState = useCallCallingState();
@@ -48,50 +68,46 @@ const CustomCallControls = () => {
         <HangUpCallButton />
       </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export const LIST_OF_QUESTIONS = [
-  "What is your favorite food?",
-  "What is your favorite color?",
-  "What is your favorite animal?",
-  "What is your favorite book?",
-  "What is your favorite movie?",
-  "What is your favorite song?",
-];
-
+// Main screen component
 const PracticeScreen = () => {
   const { id } = useLocalSearchParams<{id: string}>();
   const { user } = useAuth();
   const videoClient = useStreamVideoClient();
-  const [call, setCall] = useState<Call>();
   const router = useRouter();
-  const [card, setCard] = useState();
 
-  const setRandomQuestion = () => {
-    const randomIndex = Math.floor(Math.random() * LIST_OF_QUESTIONS.length);
-    setCard(LIST_OF_QUESTIONS[randomIndex]);
-  }
+  // State management
+  const [call, setCall] = useState<Call>();
+  const [card, setCard] = useState<string>();
 
-  useEffect(() => {
-    setRandomQuestion();
-  }, []);
-
+  // Fetch practice data
   const { data: practice, isLoading, error } = useQuery({
     queryKey: ['practice', id],
     queryFn: () => fetchPractice(id),
   });
 
-  const onChangeCard = async (card: string) => {
-    if(!call) return;
+  // Utility functions
+  const setRandomQuestion = useCallback(() => {
+    const randomIndex = Math.floor(Math.random() * LIST_OF_QUESTIONS.length);
+    setCard(LIST_OF_QUESTIONS[randomIndex]);
+  }, []);
+
+  const onChangeCard = async (newCard: string) => {
+    if (!call) return;
     await call.sendCustomEvent({
       type: 'setCard',
-      id: card,
+      id: newCard,
     });
   };
 
-  const otherUser = practice?.profile1?.id === user?.id ? practice?.profile2 : practice?.profile1;
+  // Determine other user
+  const otherUser = practice?.profile1?.id === user?.id
+    ? practice?.profile2
+    : practice?.profile1;
 
+  // Call setup effect
   useEffect(() => {
     let unsubscribeCall: (() => void) | undefined;
 
@@ -108,6 +124,7 @@ const PracticeScreen = () => {
       try {
         await newCall?.join({ create: true });
         setCall(newCall);
+        setRandomQuestion();
       } catch (error) {
         console.error('Failed to join call:', error);
       }
@@ -126,23 +143,27 @@ const PracticeScreen = () => {
         setCall(undefined);
       }
     };
-  }, [videoClient, practice]);
+  }, [videoClient, practice, router, setRandomQuestion]);
 
+  // Custom event handling
   useEffect(() => {
-    if(!call) return;
+    if (!call) return;
+
     const unsubscribe = call.on('custom', (event: CustomVideoEvent) => {
       console.log("Received event:", event);
-      if(event.custom.type === 'setCard') {
-        onChangeCard(event.custom.id);
+      if (event.custom.type === 'setCard') {
+        setCard(event.custom.id);
       }
     });
+
     return () => {
       if (unsubscribe) {
         unsubscribe();
       }
     };
-  }, [call])
+  }, [call]);
 
+  // Focus effect for cleanup
   useFocusEffect(
     useCallback(() => {
       return () => {
@@ -154,24 +175,31 @@ const PracticeScreen = () => {
     }, [call])
   );
 
+  // Rendering
   if (isLoading) {
-    return <Text>Loading...</Text>
+    return <Text>Loading...</Text>;
   }
 
   if (error) {
-    return <Text>Error: {error.message}</Text>
+    return <Text>Error: {error.message}</Text>;
   }
 
   if (!call) {
-    return null
+    return null;
   }
 
   return (
     <StreamCall call={call}>
       {otherUser && (
-        <Text className={'text-lg text-center p-4 font-bold pt-16'}>{otherUser?.name} Learning {otherUser?.learning}, speaking {otherUser?.speaking}</Text>
+        <Text className={'text-lg text-center p-4 font-bold pt-16'}>
+          {otherUser?.name} Learning {otherUser?.learning}, speaking {otherUser?.speaking}
+        </Text>
       )}
-      <ConversationCard onChangeCard={onChangeCard} card={card} setRandomQuestion={setRandomQuestion} />
+      <ConversationCard
+        onChangeCard={onChangeCard}
+        card={card}
+        setRandomQuestion={setRandomQuestion}
+      />
       <CallContent
         onHangupCallHandler={() => router.back()}
         CallControls={CustomCallControls}
