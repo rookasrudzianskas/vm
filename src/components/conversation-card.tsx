@@ -1,8 +1,8 @@
 //@ts-nocheck
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, Button } from "react-native";
 
-const ConversationCard = () => {
+const ConversationCard = ({onChangeCard}: {onChangeCard: any}) => {
   const LIST_OF_QUESTIONS = [
     "What is your favorite food?",
     "What is your favorite color?",
@@ -12,15 +12,24 @@ const ConversationCard = () => {
     "What is your favorite song?",
   ]
 
+  const [card, setCard] = useState();
   const setRandomQuestion = () => {
     const randomIndex = Math.floor(Math.random() * LIST_OF_QUESTIONS.length);
-    return LIST_OF_QUESTIONS[randomIndex];
+    setCard(LIST_OF_QUESTIONS[randomIndex]);
+  }
+
+  useEffect(() => {
+    setRandomQuestion();
+  }, []);
+
+  if(!card) {
+    return null;
   }
 
   return (
     <View className={'items-center justify-center'}>
       <Text className={'text-center text-lg font-bold'}>
-        {setRandomQuestion()}
+        {card}
       </Text>
       <Button
         title="Next"

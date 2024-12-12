@@ -45,7 +45,6 @@ const CustomCallControls = () => {
         <ToggleAudioPublishingButton />
         <ToggleVideoPublishingButton />
         <ToggleCameraFaceButton />
-        <MaterialCommunityIcons name="cards" size={24} color="black" />
         <HangUpCallButton />
       </View>
     </SafeAreaView>
@@ -59,6 +58,10 @@ const PracticeScreen = () => {
     queryKey: ['practice', id],
     queryFn: () => fetchPractice(id),
   });
+
+  const onChangeCard = () => {
+    console.log("Card changed");
+  }
 
   const otherUser = practice?.profile1?.id === user?.id ? practice?.profile2 : practice?.profile1;
 
@@ -130,7 +133,7 @@ const PracticeScreen = () => {
       {otherUser && (
         <Text className={'text-lg text-center p-4 font-bold pt-16'}>{otherUser?.name} Learning {otherUser?.learning}, speaking {otherUser?.speaking}</Text>
       )}
-      <ConversationCard />
+      <ConversationCard onChangeCard={onChangeCard} />
       <CallContent
         onHangupCallHandler={() => router.back()}
         CallControls={CustomCallControls}
