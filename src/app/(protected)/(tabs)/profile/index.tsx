@@ -11,9 +11,22 @@ import {
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { supabase } from '~/src/lib/supabase';
+import { useAuth } from "~/src/contexts/AuthProvider";
+import { useQuery } from "@tanstack/react-query";
 
 const SettingsScreen = () => {
   const router = useRouter();
+  const { user } = useAuth();
+
+  const fetchProfile = async (id: string) => {
+    const { data, error } = await supabase.from('profiles').select('*').eq('id', id).single();
+  }
+
+  const { data: profile } = useQuery({
+    queryKey: ['profile', user?.id],
+    queryFn: () => fetchProfile(user?.id!),
+  });
+
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
   const [darkMode, setDarkMode] = React.useState(false);
 
