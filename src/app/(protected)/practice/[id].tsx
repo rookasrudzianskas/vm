@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "~/src/lib/supabase";
 import {
   Call,
-  CallContent, HangUpCallButton,
+  CallContent, CustomVideoEvent, HangUpCallButton,
   StreamCall, ToggleAudioPublishingButton, ToggleCameraFaceButton, ToggleVideoPublishingButton,
   useCallStateHooks,
   useStreamVideoClient
@@ -54,20 +54,24 @@ const CustomCallControls = () => {
 const PracticeScreen = () => {
   const { id } = useLocalSearchParams<{id: string}>();
   const { user } = useAuth();
+  const videoClient = useStreamVideoClient();
+  const [call, setCall] = useState<Call>();
+  const router = useRouter();
+
   const { data: practice, isLoading, error } = useQuery({
     queryKey: ['practice', id],
     queryFn: () => fetchPractice(id),
   });
 
-  const onChangeCard = () => {
-    console.log("Card changed");
-  }
+  const onChangeCard = async (card: string) => {
+    if(!call) return;
+    await call.sendCustomEvent({
+      type: 'setCard',
+      id: card,
+    });
+  };
 
   const otherUser = practice?.profile1?.id === user?.id ? practice?.profile2 : practice?.profile1;
-
-  const videoClient = useStreamVideoClient();
-  const [call, setCall] = useState<Call>();
-  const router = useRouter();
 
   useEffect(() => {
     let unsubscribeCall: (() => void) | undefined;
@@ -103,7 +107,14 @@ const PracticeScreen = () => {
         setCall(undefined);
       }
     };
-  }, [videoClient, practice, router]);
+  }, [videoClient, practice]);
+
+  useEffect(() => {
+    if(!call) return;
+    call.on('setCard', (event: CustomVideoEvent) => {
+      console.log("Received event:", event);
+    });
+  }, [call])
 
   useFocusEffect(
     useCallback(() => {
