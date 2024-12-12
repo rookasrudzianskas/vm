@@ -12,7 +12,15 @@ import {
 } from "@stream-io/video-react-native-sdk";
 
 const fetchPractice = async (id: string) => {
-  const { data, error } = await supabase.from('practices').select('*').eq('id', id).single();
+  const { data, error } = await
+    supabase
+      .from('practices')
+    .select('*, profile1:profiles!practices_user1_id_fkey(*),profile2:profiles!practices_user2_id_fkey(*)')
+    .eq('id', id)
+    .single();
+
+  console.log("Practice");
+  console.log(JSON.stringify(data, null, 2));
 
   if (error) {
     console.log(error);
