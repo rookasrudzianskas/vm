@@ -46,7 +46,7 @@ const SelectSpeakingLanguage = () => {
       if (user) {
         const { error } = await supabase
           .from('profiles')
-          .update({ learning: language })
+          .update({ speaking: language })
           .eq('id', user.id);
 
         if (error) {
@@ -60,7 +60,7 @@ const SelectSpeakingLanguage = () => {
     }
   });
   return (
-    <LanguageList onSelect={onSelect} />
+    <LanguageList onSelect={(language) => mutate(language)} />
   );
 };
 
