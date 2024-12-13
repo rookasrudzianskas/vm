@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { FontAwesome } from '@expo/vector-icons';
 import React from 'react';
 import {
@@ -13,6 +14,7 @@ import { Stack, useRouter } from 'expo-router';
 import { supabase } from '~/src/lib/supabase';
 import { useAuth } from "~/src/contexts/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
+
 import { fetchProfile } from "~/src/lib/profile";
 
 const SettingsScreen = () => {

@@ -58,7 +58,7 @@ export default function Home() {
       />
       <ChannelList onSelect={(channel) => {
         setChannel(channel)
-        router.push('/channel')
+        router.push('/channels')
       }} filters={filters} />
     </View>
   );

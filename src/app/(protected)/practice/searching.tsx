@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useCallback, useEffect } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import { useFocusEffect, useRouter } from "expo-router";

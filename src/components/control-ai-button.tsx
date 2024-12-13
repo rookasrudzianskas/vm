@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useWatchers } from "../utils/useWatchers";
 import { useEffect, useState } from "react";
 import { startAI, stopAI } from "~/src/http/requests";

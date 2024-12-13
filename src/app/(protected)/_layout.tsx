@@ -16,7 +16,8 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
       <ChannelStateProvider>
         <VideoClient>
           <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="profile" options={{ headerShown: false }} />
           </Stack>
         </VideoClient>
       </ChannelStateProvider>

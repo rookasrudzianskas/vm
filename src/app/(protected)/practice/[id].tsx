@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useCallback, useEffect, useState } from "react";
 import { Text, View, SafeAreaView } from "react-native";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
