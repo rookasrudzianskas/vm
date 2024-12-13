@@ -11,6 +11,7 @@ import {
   useChatContext
 } from "stream-chat-expo";
 import { useAuth } from "~/src/contexts/AuthProvider";
+import ControlAIButton from "~/src/components/control-ai-button";
 
 export default function Home() {
   const [channel, setChannel] = useState<ChannelType>();
@@ -41,8 +42,9 @@ export default function Home() {
       {channel ? (
         <Channel channel={channel}>
           <MessageList />
+          <ControlAIButton channel={channel} />
           <AITypingIndicatorView />
-          <View className={'mb-4'}>
+          <View className={'mb-0'}>
             <MessageInput />
           </View>
         </Channel>
