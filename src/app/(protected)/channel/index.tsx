@@ -18,24 +18,18 @@ export default function ChannelScreen() {
       if(loading || !watchers) {
         return;
       }
-      const isAIOn = watchers.some((watcher) => watcher.startsWith('ai-bot'));
-      if(!isAIOn) {
+      const isOn = watchers.some((watcher) => watcher.startsWith('ai-bot'));
+      if(!isOn) {
         startAI(channel.id);
       }
-    }, [])
-  }, [channel, loading]);
-
-  useEffect(() => {
-    if (watchers) {
-      setIsAIOn(watchers.some((watcher) => watcher.startsWith('ai-bot')));
-    }
-
-    return () => {
-      if (isAIOn) {
-        stopAI(channel.id);
+      return () => {
+        const isOn = watchers.some((watcher) => watcher.startsWith('ai-bot'));
+        if(!isOn) {
+          stopAI(channel.id);
+        }
       }
-    }
-  }, [watchers]);
+    }, [])
+  }, [channel, loading, watchers]);
 
   const onPress = async () => {
     if (!channel) {
