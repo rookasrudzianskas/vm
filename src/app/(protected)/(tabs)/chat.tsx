@@ -2,7 +2,14 @@ import { Stack, Link } from 'expo-router';
 import React, { useEffect, useState } from "react";
 import { Button, SafeAreaView, View } from 'react-native';
 import { Channel as ChannelType } from 'stream-chat';
-import { Channel, ChannelList, MessageInput, MessageList, useChatContext } from "stream-chat-expo";
+import {
+  AITypingIndicatorView,
+  Channel,
+  ChannelList,
+  MessageInput,
+  MessageList,
+  useChatContext
+} from "stream-chat-expo";
 import { useAuth } from "~/src/contexts/AuthProvider";
 
 export default function Home() {
@@ -34,7 +41,8 @@ export default function Home() {
       {channel ? (
         <Channel channel={channel}>
           <MessageList />
-          <View className={'mb-8'}>
+          <AITypingIndicatorView />
+          <View className={'mb-4'}>
             <MessageInput />
           </View>
         </Channel>

@@ -1,4 +1,4 @@
-import { Chat, useCreateChatClient } from "stream-chat-expo";
+import { Chat, MessageType, useCreateChatClient } from "stream-chat-expo";
 import { useAuth } from "~/src/contexts/AuthProvider";
 import { supabase } from "~/src/lib/supabase";
 import { Text, View } from "react-native";
@@ -24,7 +24,9 @@ export default function ChatClient({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <Chat client={client}>
+    <Chat client={client}
+          isMessageAIGenerated={(message: MessageType) => !!message.ai_generated}
+    >
       {children}
     </Chat>
   )
