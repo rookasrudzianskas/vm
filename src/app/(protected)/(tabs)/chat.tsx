@@ -12,11 +12,12 @@ import {
 } from "stream-chat-expo";
 import { useAuth } from "~/src/contexts/AuthProvider";
 import ControlAIButton from "~/src/components/control-ai-button";
+import { useChannelSState } from "~/src/contexts/ChannelState";
 
 export default function Home() {
-  const [channel, setChannel] = useState<ChannelType>();
   const { client } = useChatContext();
   const { user } = useAuth();
+  const { channel, setChannel} = useChannelSState();
 
   const filters = {
     members: { $in: [user?.id] },
@@ -35,22 +36,9 @@ export default function Home() {
       <Stack.Screen
         options={{
           headerShown: false,
-          headerLeft: () =>
-            channel && <Button title="Back" onPress={() => setChannel(undefined)} />,
         }}
       />
-      {channel ? (
-        <Channel channel={channel}>
-          <MessageList />
-          <ControlAIButton channel={channel} />
-          <AITypingIndicatorView />
-          <View className={'mb-0'}>
-            <MessageInput />
-          </View>
-        </Channel>
-      ) : (
-        <ChannelList onSelect={setChannel} filters={filters} />
-      )}
+      <ChannelList onSelect={setChannel} filters={filters} />
     </View>
   );
 }
