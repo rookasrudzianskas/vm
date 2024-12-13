@@ -15,8 +15,9 @@ export default function Home() {
   }
 
   useEffect(() => {
-    const channel = client.channel("messaging", "abssss", {
+    const channel = client.channel("messaging", "hello2312", {
       name: "The Park",
+      members: [user?.id],
     });
     channel.watch();
   }, []);
@@ -38,7 +39,7 @@ export default function Home() {
           </View>
         </Channel>
       ) : (
-        <ChannelList onSelect={setChannel} />
+        <ChannelList onSelect={setChannel} filters={filters} />
       )}
     </View>
   );
