@@ -29,6 +29,12 @@ export default function ChannelScreen() {
     if (watchers) {
       setIsAIOn(watchers.some((watcher) => watcher.startsWith('ai-bot')));
     }
+
+    return () => {
+      if (isAIOn) {
+        stopAI(channel.id);
+      }
+    }
   }, [watchers]);
 
   const onPress = async () => {
