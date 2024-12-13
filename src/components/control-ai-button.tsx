@@ -14,15 +14,19 @@ const ControlAIButton = ({ channel }: { channel: any }) => {
     }
   }, [watchers]);
 
-  const onPress = async () => {
-    if (!channelId) {
-      return;
+  useEffect(() => {
+    const userData = {
+      user_name: "Rokas",
+      target_language: "English",
+      native_language: "German",
+      proficiency_level: "Intermediate",
     }
 
-    const handler = () => (isAIOn ? stopAI(channelId) : startAI(channelId));
-
-    await handler();
-  };
+    startAI(channelId, userData);
+    return () => {
+      stopAI(channelId);
+    }
+  }, []);
 
   return watchers && !loading ? (
     <Pressable
