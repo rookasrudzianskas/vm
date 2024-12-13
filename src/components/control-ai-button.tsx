@@ -2,11 +2,22 @@ import { useWatchers } from "../utils/useWatchers";
 import { useEffect, useState } from "react";
 import { startAI, stopAI } from "~/src/http/requests";
 import { Pressable, Text } from "react-native";
+import { useRouter } from "expo-router";
+import { useAuth } from "~/src/contexts/AuthProvider";
+import { useQuery } from "@tanstack/react-query";
+import { fetchProfile } from "~/src/lib/profile";
 
 const ControlAIButton = ({ channel }: { channel: any }) => {
   const channelId = channel.id;
   const { watchers, loading } = useWatchers({ channel });
   const [isAIOn, setIsAIOn] = useState(false);
+  const router = useRouter();
+  const { user } = useAuth();
+
+  const { data: profile } = useQuery({
+    queryKey: ['profile', user?.id],
+    queryFn: () => fetchProfile(user?.id!),
+  });
 
   useEffect(() => {
     if (watchers) {
@@ -16,7 +27,7 @@ const ControlAIButton = ({ channel }: { channel: any }) => {
 
   useEffect(() => {
     const userData = {
-      user_name: "Rokas",
+      user_name: profile?.name,
       target_language: "English",
       native_language: "German",
       proficiency_level: "Intermediate",
