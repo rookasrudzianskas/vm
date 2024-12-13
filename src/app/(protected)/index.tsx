@@ -1,15 +1,42 @@
-//@ts-nocheck
-import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+// @ts-nocheck
+import { useChannelSState } from "~/src/contexts/ChannelState";
+import { AITypingIndicatorView, MessageInput, MessageList, Channel } from "stream-chat-expo";
+import ControlAIButton from "~/src/components/control-ai-button";
+import { SafeAreaView, View } from "react-native";
+import React, { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { Stack } from "expo-router";
+import { useWatchers } from "~/src/utils/useWatchers";
+import { startAI, stopAI } from "~/src/http/requests";
 
-const Index = () => {
+export default function ChannelScreen() {
+  const { channel } = useChannelSState();
+  const [isAIOn, setIsAIOn] = useState(false);
+  const { watchers, loading } = useWatchers({ channel });
+
+  useEffect(() => {
+    startAI(channel.id);
+
+    return () => {
+      stopAI(channel.id);
+    }
+  }, [watchers]);
+
+  if(!channel) {
+    return null;
+  }
   return (
-    <View>
-      <Text>
-        byrookas 🚀
-      </Text>
-    </View>
-  );
-};
+    <SafeAreaView edges={['bottom']} className={'bg-white'}>
+      <Stack.Screen options={{
 
-export default Index;
+      }} />
+      <Channel channel={channel}>
+        <MessageList />
+        <ControlAIButton channel={channel} />
+        <AITypingIndicatorView />
+        <View className={'mb-0'}>
+          <MessageInput />
+        </View>
+      </Channel>
+    </SafeAreaView>
+  )
+}
