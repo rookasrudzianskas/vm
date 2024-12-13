@@ -29,7 +29,15 @@ export default function ChannelScreen() {
         }
       }
     }, [])
-  }, [channel, loading, watchers]);
+  }, [channel, watchers]);
+
+  useLayoutEffect(() => {
+    useCallback(() => {
+      if(isAIOn) {
+        stopAI(channel.id);
+      }
+    });
+  }, [])
 
   const onPress = async () => {
     if (!channel) {
