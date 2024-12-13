@@ -13,40 +13,13 @@ export default function ChannelScreen() {
   const [isAIOn, setIsAIOn] = useState(false);
   const { watchers, loading } = useWatchers({ channel });
 
-  useLayoutEffect(() => {
-    useCallback(() => {
-      if(loading || !watchers) {
-        return;
-      }
-      const isOn = watchers.some((watcher) => watcher.startsWith('ai-bot'));
-      if(!isOn) {
-        startAI(channel.id);
-      }
-      return () => {
-        const isOn = watchers.some((watcher) => watcher.startsWith('ai-bot'));
-        if(!isOn) {
-          stopAI(channel.id);
-        }
-      }
-    }, [])
-  }, [channel, watchers]);
+  useEffect(() => {
+    startAI(channel.id);
 
-  useLayoutEffect(() => {
-    useCallback(() => {
-      if(isAIOn) {
-        stopAI(channel.id);
-      }
-    });
-  }, [])
-
-  const onPress = async () => {
-    if (!channel) {
-      return;
+    return () => {
+      stopAI(channel.id);
     }
-
-    const handler = () => (isAIOn ? stopAI(channel.id) : startAI(channel.id));
-    await handler();
-  }
+  }, [watchers]);
 
   return (
     <SafeAreaView edges={['bottom']} className={'bg-white'}>
